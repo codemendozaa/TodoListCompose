@@ -31,7 +31,10 @@ class TasksViewModel @Inject constructor() :ViewModel() {
     }
 
     fun onCheckBoxSelected(taskModel: TaskModel) {
-
+        val index = _tasks.indexOf(taskModel)
+        _tasks [index] = _tasks[index].let {
+            it.copy(selected = !it.selected)
+        }
     }
 }
 

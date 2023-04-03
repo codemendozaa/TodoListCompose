@@ -1,15 +1,27 @@
 package com.example.todolistcompose.addTasks.ui
 
-import android.util.Log
+
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.todolistcompose.addTasks.domain.AddTaskUseCase
+import com.example.todolistcompose.addTasks.domain.GetTaskUseCase
+import com.example.todolistcompose.addTasks.ui.TaskUIState.Success
 import com.example.todolistcompose.addTasks.ui.model.TaskModel
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class TasksViewModel @Inject constructor() :ViewModel() {
+class TasksViewModel @Inject constructor(
+    private val addTaskUseCase: AddTaskUseCase,
+    getTaskUseCase: GetTaskUseCase
+) :ViewModel() {
 
+    val uiState: StateFlow<TaskUIState> = getTaskUseCase().map (::Success )
+        .catch { TaskUIState.Error(it) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000),TaskUIState.Loading)
 
     private val _showDialog = MutableLiveData<Boolean>()
     var showDialog:LiveData<Boolean> = _showDialog
@@ -24,6 +36,10 @@ class TasksViewModel @Inject constructor() :ViewModel() {
     fun onTaskCreate(task: String) {
         _showDialog.value = false
        _tasks.add(TaskModel(task = task))
+
+        viewModelScope.launch {
+            addTaskUseCase(TaskModel(task = task))
+        }
     }
 
     fun onShowDialogClick() {

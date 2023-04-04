@@ -8,14 +8,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todolistcompose.addTasks.domain.AddTaskUseCase
 import com.example.todolistcompose.addTasks.domain.GetTaskUseCase
+import com.example.todolistcompose.addTasks.domain.UpdateTaskUseCase
 import com.example.todolistcompose.addTasks.ui.TaskUIState.Success
 import com.example.todolistcompose.addTasks.ui.model.TaskModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
+@HiltViewModel
 class TasksViewModel @Inject constructor(
     private val addTaskUseCase: AddTaskUseCase,
+    private val updateTaskUseCase: UpdateTaskUseCase,
     getTaskUseCase: GetTaskUseCase
 ) :ViewModel() {
 
@@ -26,8 +29,8 @@ class TasksViewModel @Inject constructor(
     private val _showDialog = MutableLiveData<Boolean>()
     var showDialog:LiveData<Boolean> = _showDialog
 
-    private val _tasks = mutableStateListOf<TaskModel>()
-    val tasks:List<TaskModel> = _tasks
+  //  private val _tasks = mutableStateListOf<TaskModel>()
+  //  val tasks:List<TaskModel> = _tasks
 
     fun onDialogClose() {
        _showDialog.value = false
@@ -35,7 +38,6 @@ class TasksViewModel @Inject constructor(
 
     fun onTaskCreate(task: String) {
         _showDialog.value = false
-       _tasks.add(TaskModel(task = task))
 
         viewModelScope.launch {
             addTaskUseCase(TaskModel(task = task))
@@ -47,16 +49,16 @@ class TasksViewModel @Inject constructor(
     }
 
     fun onCheckBoxSelected(taskModel: TaskModel) {
-        val index = _tasks.indexOf(taskModel)
-        _tasks [index] = _tasks[index].let {
-            it.copy(selected = !it.selected)
+        //update
+        viewModelScope.launch { taskModel. copy(selected = !taskModel.selected) }
         }
-    }
+
 
     fun onItemRemove(taskModel: TaskModel) {
-        val task = _tasks.find { it.id == taskModel.id }
-        _tasks.remove(task)
+       //val task = _tasks.find { it.id == taskModel.id }
+       // _tasks.remove(task)
     }
 }
+
 
 

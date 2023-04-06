@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todolistcompose.addTasks.domain.AddTaskUseCase
+import com.example.todolistcompose.addTasks.domain.DeleteTaskUseCase
 import com.example.todolistcompose.addTasks.domain.GetTaskUseCase
 import com.example.todolistcompose.addTasks.domain.UpdateTaskUseCase
 import com.example.todolistcompose.addTasks.ui.TaskUIState.Success
@@ -19,6 +20,7 @@ import javax.inject.Inject
 class TasksViewModel @Inject constructor(
     private val addTaskUseCase: AddTaskUseCase,
     private val updateTaskUseCase: UpdateTaskUseCase,
+    private val deleteTaskUseCase: DeleteTaskUseCase,
     getTaskUseCase: GetTaskUseCase
 ) :ViewModel() {
 
@@ -50,13 +52,17 @@ class TasksViewModel @Inject constructor(
 
     fun onCheckBoxSelected(taskModel: TaskModel) {
         //update
-        viewModelScope.launch { taskModel. copy(selected = !taskModel.selected) }
+        viewModelScope.launch {
+         updateTaskUseCase(taskModel. copy(selected = !taskModel.selected))}
         }
 
 
     fun onItemRemove(taskModel: TaskModel) {
-       //val task = _tasks.find { it.id == taskModel.id }
-       // _tasks.remove(task)
+        //remove
+        viewModelScope.launch {
+            deleteTaskUseCase(taskModel)
+        }
+
     }
 }
 

@@ -18,16 +18,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import com.example.todolistcompose.R
 import com.example.todolistcompose.addTasks.ui.model.TaskModel
 
-@Composable
 
+@Composable
 fun TasksScreen(tasksViewModel: TasksViewModel) {
 
     val showDialog:Boolean by tasksViewModel.showDialog.observeAsState(initial = false)
@@ -56,15 +59,21 @@ fun TasksScreen(tasksViewModel: TasksViewModel) {
 
     }
 
-
 }
 
 @Composable
 fun TasksList(tasks: List<TaskModel>, tasksViewModel:TasksViewModel) {
-
-    LazyColumn(){
-        items(tasks, key = {it.id}){ task->
-            ItemTask(taskModel = task, tasksViewModel = tasksViewModel)
+    Column{
+        Text(
+            text = stringResource(id = R.string.title),
+            style = MaterialTheme.typography.h4,
+            modifier = Modifier.padding(16.dp)
+                .align(Alignment.CenterHorizontally)
+        )
+        LazyColumn(){
+            items(tasks, key = {it.id}){ task->
+                ItemTask(taskModel = task, tasksViewModel = tasksViewModel)
+            }
         }
     }
 }

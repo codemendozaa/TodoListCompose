@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">TodoListCompose</string>
+    <string name="title">Mis Tareas</string>
 </resources>
